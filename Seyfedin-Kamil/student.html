@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Attendance List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7ff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #4a6cf7, #6a11cb);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .summary-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+        
+        .summary-card h2 {
+            color: #4a6cf7;
+            margin-bottom: 15px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4a6cf7;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .controls {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .controls h2 {
+            color: #4a6cf7;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        button {
+            background-color: #4a6cf7;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #3a5cd6;
+        }
+        
+        .attendance-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-header h2 {
+            color: #4a6cf7;
+        }
+        
+        .date-display {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .attendance-table th, .attendance-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .attendance-table th {
+            background-color: #f8f9ff;
+            color: #4a6cf7;
+            font-weight: 600;
+        }
+        
+        .attendance-table tr:hover {
+            background-color: #f8f9ff;
+        }
+        
+        .status-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .present {
+            background-color: #e7f6e9;
+            color: #2e7d32;
+        }
+        
+        .absent {
+            background-color: #ffeaea;
+            color: #d32f2f;
+        }
+        
+        .late {
+            background-color: #fff4e5;
+            color: #f57c00;
+        }
+        
+        .status-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .action-btn {
+            background: transparent;
+            color: #666;
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .action-btn:hover {
+            background-color: #f8f9ff;
+            color: #4a6cf7;
+        }
+        
+        .history-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .attendance-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .no-tasks {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Student Attendance List</h1>
+            <p class="tagline">Track and manage student attendance with ease</p>
+        </header>
+        
+        <div class="dashboard">
+            <div class="summary-card">
+                <h2>Today's Summary</h2>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-number" id="total-students">24</div>
+                        <div class="stat-label">Total Students</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" id="present-count">18</div>
+                        <div class="stat-label">Present</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" id="absent-count">3</div>
+                        <div class="stat-label">Absent</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <h2>Class Details</h2>
+                <div class="form-group">
+                    <label for="class-select">Select Class</label>
+                    <select id="class-select">
+                        <option value="class1">Grade 9 - Section A</option>
+                        <option value="class2">Grade 10 - Section B</option>
+                        <option value="class3">Grade 11 - Social Science</option>
+                        <option value="class4">Grade 12 - Natural Science</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date-picker">Select Date</label>
+                    <input type="date" id="date-picker" value="2023-10-15">
+                </div>
+                <button id="save-btn"><i class="fas fa-save"></i> Save Attendance</button>
+                <button id="export-btn"><i class="fas fa-download"></i> Export to CSV</button>
+            </div>
+        </div>
+        
+        <div class="attendance-section">
+            <div class="section-header">
+                <h2>Student Attendance</h2>
+                <div class="date-display" id="date-display">Monday, september 05, 2018 E.C</div>
+            </div>
+            
+            <table class="attendance-table">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Time</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="attendance-body">
+                    <!-- Student data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="history-section">
+            <div class="section-header">
+                <h2>Attendance History</h2>
+            </div>
+            
+            <table class="attendance-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Class</th>
+                        <th>Present</th>
+                        <th>Absent</th>
+                        <th>Late</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="history-body">
+                    <tr>
+                        <td>September 05, 2018</td>
+                        <td>Grade 9</td>
+                        <td>20</td>
+                        <td>2</td>
+                        <td>2</td>
+                        <td><button class="action-btn">View</button></td>
+                    </tr>
+                    <tr>
+                        <td>september 04, 2018</td>
+                        <td>Grade 10</td>
+                        <td>22</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td><button class="action-btn">View</button></td>
+                    </tr>
+                    <tr>
+                        <td>septmber 03, 2018</td>
+                        <td>Grade 11 Social Science</td>
+                        <td>19</td>
+                        <td>3</td>
+                        <td>2</td>
+                        <td><button class="action-btn">View</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <footer>
+            <p>Student Attendance System &copy; 2018| Developed for Educational Purposes</p>
+        </footer>
+    </div>
+
+    <script>
+        // Sample student data
+        const students = [
+            { id: 'S001', name: 'Adnan Radi', status: 'present', time: '8:05 AM' },
+            { id: 'S002', name: 'Abdi Nure', status: 'present', time: '8:02 AM' },
+            { id: 'S003', name: 'Abdilkadir Bereka', status: 'absent', time: '--' },
+            { id: 'S004', name: 'AbdilAziz Abdellah', status: 'present', time: '8:10 AM' },
+            { id: 'S005', name: 'Feris Mohemmed', status: 'late', time: '8:25 AM' },
+            { id: 'S006', name: 'Halfiya Selman', status: 'present', time: '8:01 AM' },
+            { id: 'S007', name: 'Nagesh Aman', status: 'present', time: '8:04 AM' },
+            { id: 'S008', name: 'Sebir Fedlu', status: 'present', time: '8:03 AM' },
+            { id: 'S009', name: 'Seyfedin Kamil', status: 'absent', time: '--' },
+            { id: 'S010', name: 'Zulal kamel', status: 'present', time: '8:07 AM' }
+        ];
+        
+        // DOM Elements
+        const attendanceBody = document.getElementById('attendance-body');
+        const totalStudents = document.getElementById('total-students');
+        const presentCount = document.getElementById('present-count');
+        const absentCount = document.getElementById('absent-count');
+        const datePicker = document.getElementById('date-picker');
+        const dateDisplay = document.getElementById('date-display');
+        const saveBtn = document.getElementById('save-btn');
+        const exportBtn = document.getElementById('export-btn');
+        
+        // Initialize the attendance table
+        function renderAttendanceTable() {
+            attendanceBody.innerHTML = '';
+            let present = 0;
+            let absent = 0;
+            let late = 0;
+            
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                
+                // Update counts
+                if (student.status === 'present') present++;
+                if (student.status === 'absent') absent++;
+                if (student.status === 'late') late++;
+                
+                row.innerHTML = `
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>
+                        <button class="status-btn ${student.status}" onclick="changeStatus('${student.id}')">
+                            ${student.status.charAt(0).toUpperCase() + student.status.slice(1)}
+                        </button>
+                    </td>
+                    <td>${student.time}</td>
+                    <td>
+                        <button class="action-btn" onclick="editStudent('${student.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn" onclick="viewDetails('${student.id}')"><i class="fas fa-info-circle"></i></button>
+                    </td>
+                `;
+                
+                attendanceBody.appendChild(row);
+            });
+            
+            // Update counts
+            totalStudents.textContent = students.length;
+            presentCount.textContent = present;
+            absentCount.textContent = absent;
+        }
+        
+        // Change student status
+        function changeStatus(studentId) {
+            const student = students.find(s => s.id === studentId);
+            const statuses = ['present', 'absent', 'late'];
+            const currentIndex = statuses.indexOf(student.status);
+            const nextIndex = (currentIndex + 1) % statuses.length;
+            
+            student.status = statuses[nextIndex];
+            
+            // Update time if changing to present or late
+            if (student.status === 'present' || student.status === 'late') {
+                const now = new Date();
+                student.time = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            } else {
+                student.time = '--';
+            }
+            
+            renderAttendanceTable();
+        };
+        
+        // Edit student (placeholder function)
+        function editStudent(studentId) {
+            alert(`Edit functionality would open for student: ${studentId}`);
+        };
+        
+        // View student details (placeholder function)
+        function viewDetails(studentId) {
+            alert(`View details for student: ${studentId}`);
+        };
+        
+        // Update date display
+        function updateDateDisplay() {
+            const selectedDate = new Date(datePicker.value);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            dateDisplay.textContent = selectedDate.toLocaleDateString('en-US', options);
+        }
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set today's date as default
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            let mm = today.getMonth() + 1;
+            let dd = today.getDate();
+            
+            if (dd < 10) dd = '0' + dd;
+            if (mm < 10) mm = '0' + mm;
+            
+            const formattedToday = `${yyyy}-${mm}-${dd}`;
+            datePicker.value = formattedToday;
+            
+            // Update date display
+            updateDateDisplay();
+            
+            // Render the table
+            renderAttendanceTable();
+            
+            // Save attendance (placeholder function)
+            saveBtn.addEventListener('click', function() {
+                alert('Attendance data saved successfully!');
+            });
+            
+            // Export to CSV (placeholder function)
+            exportBtn.addEventListener('click', function() {
+                alert('Attendance data exported to CSV file!');
+            });
+            
+            // Update date display when date picker changes
+            datePicker.addEventListener('change', updateDateDisplay);
+        });
+    </script>
+</body>
+</html>

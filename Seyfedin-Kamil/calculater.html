@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculater</title>
+    <style>
+        
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: arial,sans-serif;
+        }
+        body{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #7d9189;
+
+        }
+        .calculator{
+            background-color: #22252d;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 15px 15px gold;
+        }
+        .font{
+            width: 100%;
+            height: 80px;
+            color: rgb(181, 5, 5);
+            text-align: right;
+            padding: 20px;
+            font-size: 30px;
+        }
+        .buttons{
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            grid-gap: 20px;
+        }
+        button{
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background:#3b3b3d;
+            color: white;
+            font-size: 20px;
+            
+        }
+        button:hover{
+            background: #1540c0;
+        }
+        .operator{
+            color: #33ffd8;
+        }
+        .equals{
+            background: #33ffd8;
+            color: #22252d;
+        }
+        .equals:hover{
+            background: #5a6764;
+        }
+        .clear, .backspace{
+            color: #ff6b6b;
+        }
+    
+    </style>
+</head>
+<body>
+        <div class="calculator">
+            <input type="text" class="font" id="display">
+            <div class="buttons">
+                <button class="clear" onclick="clearDisplay()">C</button>
+                <button class="backspace" onclick="backspace()">X</button>
+                <button class="operator" onclick="appendToDisplay('/')">/</button>
+                <button class="operator" onclick="appendToDisplay('*')">*</button>
+                <button onclick="appendToDisplay('7')">7</button>
+                <button onclick="appendToDisplay('8')">8</button>
+                <button onclick="appendToDisplay('9')">9</button>
+                <button class="operator" onclick="appendToDisplay('-')">-</button>
+                <button onclick="appendToDisplay('4')">4</button>
+                <button onclick="appendToDisplay('5')">5</button>
+                <button onclick="appendToDisplay('6')">6</button>
+                <button class="operator" onclick="appendToDisplay('+')">+</button>
+                <button onclick="appendToDisplay('1')">1</button>
+                <button onclick="appendToDisplay('2')">2</button>
+                <button onclick="appendToDisplay('3')">3</button>
+                <button onclick="appendToDisplay('0')" >0</button>
+                <button class="equals" onclick="calculate()"style="grid-column:span 2; width:100%;border-radius:30px;">=</button>
+                <button onclick="appendToDisplay('.')">.</button>
+                
+                
+            
+                </div>
+        </div>
+
+  <script>
+    const display=document.getElementById('display');
+    function appendToDisplay(value){
+        display.value+=value;
+    }
+    function clearDisplay(){
+        display.value='';
+    }
+    function backspace(){
+        display.value=display.value.slice(0, -1);
+    }
+    function calculate(){
+        try{
+             // replace x with * for evalution 
+           const expression=display.value.replace(/x/g, '*');
+            display.value=eval(expression);
+        }
+       catch(error){
+        display.value='Error';
+        setTimeout(()=>{
+            clearDisplay();
+        },1000);
+       }
+       
+    }
+    // keyboard event
+    document.addEventListener('keydown', function(event){
+        if( /[0-9]/.test(event.key)){
+            appendToDisplay(event.key);
+        } else if(event.key==='+' || event.key==='-' || event.key==='*'){
+            appendToDisplay(event.key)
+        } else if(event.key==='/'){
+            event.preventDefault();
+            appendToDisplay('/');
+        } else if(event.key==='Enter'|| event.key==='='){
+            calculate();
+        }else if( event.key ==='Escape'){
+            clearDisplay();
+        } else if (event.key ==='backspace'){
+            backspace();
+        } else if(event.key ==='.'){
+            appendToDisplay('.');
+        }
+    });
+  </script>
+    
+</body>
+</html>

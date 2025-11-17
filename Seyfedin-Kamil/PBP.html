@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Personal Budget Planner</title>
+  <style>
+    
+    body {
+      margin: 0; 
+      font-family: 'Helvetica Neue', Arial, "Segoe UI Emoji";
+      background:cornflowerblue;
+      color: #e5e7eb;
+      line-height: 1.6;
+    }
+    * { 
+        box-sizing: border-box; }
+    /* Navigation Styles */
+    .navbar {
+      background-color: rgba(17, 24, 39, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 0.8rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color:#3b82f6;
+    }
+    
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: 1.5rem;
+    }
+    
+    .nav-link {
+      color: #e5e7eb;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 0.8rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .nav-link:hover {
+      background-color: rgba(59, 130, 246, 0.15);
+      color: #93c5fd;
+    }
+    
+    .nav-link.active {
+      background-color: rgba(59, 130, 246, 0.25);
+      color: #bfdbfe;
+    }
+    
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+    
+    .hamburger span {
+      width: 25px;
+      height: 3px;
+      background-color: #e5e7eb;
+      margin: 2px 0;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    /* Original styles */
+    .container {
+       max-width: 1100px;
+       margin: 40px auto;
+        padding: 0 16px; }
+
+    header {
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+      gap: 12px;
+       margin-bottom: 22px;
+    }
+    .title {
+       font-size: 50px;
+        font-weight: 800; 
+         }
+
+    .sub { 
+      color: #240d03;
+       font-size: 25px ;
+      font-family: serif;}
+
+    .grid {
+      display: grid; 
+      gap: 16px;
+      grid-template-columns: 1fr 1fr ; 
+      width: 100%;
+    }
+    .card {
+      background: black;
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 35px;
+      box-shadow: 0 10px 25px rgb(96, 10, 182);
+      width: 675px;
+    }
+    .card .card-body 
+    { padding: 18px; }
+
+    .row { display: grid; 
+      grid-template-columns: repeat(12, 1fr); 
+      gap: 12px; }
+    .row + .row { margin-top: 10px; }
+
+    input, select, button, textarea {
+      width: 100%;
+       padding: 10px 12px; 
+       border-radius: 12px; 
+       border: 1px solid rgba(255,255,255,.08);
+      background: #0b1020;
+       color: #e5e7eb; 
+       outline: none;
+    }
+    input:focus, select:focus, textarea:focus { 
+        border-color:#3b82f6; 
+        box-shadow: 0 0 0 3px rgba(59,130,246,.25); }
+
+    .btn {
+         font-weight: 700; }
+    .btn.primary { 
+        background: linear-gradient(90deg, #3b82f6, #14b8a6); 
+      border: none; }
+    .btn.success {
+         background: linear-gradient(90deg, #22c55e, #16a34a);
+         border: none; }
+    .btn.warn { 
+        background: linear-gradient(90deg, #f59e0b, #f97316);
+         border: none; }
+
+    .stat-grid {
+       display: grid; 
+       grid-template-columns: repeat(3, 1fr); 
+       gap: 12px; }
+    .stat {
+      background: #0b1224;
+       border: 1px solid rgba(255,255,255,.07); 
+       border-radius: 14px;
+        padding: 12px;
+    }
+    .stat .label { 
+      color: #cbd5e1;
+       font-size: 12px; }
+    .stat .value { 
+      font-size: 22px;
+       font-weight: 800;
+        margin-top: 4px; }
+
+    .meter { 
+      height: 12px; 
+      background: #0b1020; 
+      border: 1px solid rgba(255,255,255,.08);
+       border-radius: 999px; 
+       overflow: hidden; }
+    .meter > span { 
+      display: block;
+       height: 100%; 
+       background: linear-gradient(90deg, #22c55e, #84cc16);
+        width: 0%; }
+    .meter.over > span {
+       background: linear-gradient(90deg, #ef4444, #f43f5e); }
+
+    table {
+       width: 100%; 
+       border-collapse: collapse; }
+    th, td { 
+      padding: 12px;
+       border-bottom: 1px solid rgba(255,255,255,.08);
+        text-align: left; }
+    th {
+       font-size: 12px; 
+       color: #cbd5e1;
+        font-weight: 700; 
+        text-transform: uppercase; 
+        letter-spacing: .5px; }
+    td.amount { 
+      font-weight: 700; }
+    tr:hover {
+       background: rgba(255,255,255,.03); }
+    .empty {
+       text-align: center; 
+       color: #9ca3af;
+        padding: 16px 0; }
+
+    .pill { 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 6px; padding: 6px 10px; 
+      border-radius: 999px; 
+      font-size: 12px; 
+      font-weight: 700; }
+    .pill.expense {
+       background: rgba(239,68,68,.15); 
+       color: #fecaca; 
+       border: 1px solid rgba(239,68,68,.35); }
+    .pill.income  {
+       background: rgba(34,197,94,.15);
+        color: #bbf7d0; 
+        border: 1px solid rgba(34,197,94,.35); }
+
+    .toolbar { 
+      display: flex;
+       gap: 10px; 
+       flex-wrap: wrap; }
+    .hint {
+       color: #9ca3af; 
+       font-size: 12px; }
+    footer { 
+      text-align: center; 
+      color: #9ca3af; 
+      font-size: 12px; 
+      margin: 24px 0; }
+
+    
+    /* Footer Navigation */
+    .footer-nav {
+      background-color:#0a2d7a;
+      border-top: 1px solid rgb(16, 205, 45);
+      padding: 10px;
+      margin-top: 10px;
+    }
+    
+    .footer-nav-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding:  16px;
+    }
+    
+    .footer-menu {
+      display: flex;
+      justify-content: center;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .footer-link {
+      color: #e5e7eb;
+      text-decoration: none;
+      font-weight: 700;
+      opacity: 1;
+      cursor: pointer;
+    }
+    
+    .footer-link:hover {
+      opacity: 1;
+      color: #d85509;
+    }
+    
+    .copyright {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      opacity: 0.7;
+      font-family: sans-serif;
+    }
+    
+    /* About and Contact section styles */
+    .info-section {
+      background-color: #111827;
+      border-radius: 18px;
+      padding: 2rem;
+      margin: 2rem auto;
+      max-width: 1100px;
+      border: 1px solid rgba(255,255,255,.07);
+      box-shadow: 0 10px 25px black;
+      display: none;
+    }
+    
+    .info-section h2 {
+      color: #3b823b;
+      margin-top: 0;
+    }
+    
+    .info-section.visible {
+      display: block;
+    }
+    
+    .click-counter {
+      background: rgba(59, 130, 246, 0.1);
+      border-radius: 8px;
+      padding: 10px 15px;
+      margin-top: 15px;
+      font-size: 14px;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    
+    /* Responsive styles */
+    
+    @media (max-width: 768px) {
+      .hamburger {
+        display: flex;
+      }
+      
+      .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 60px;
+        flex-direction: column;
+        background-color: #111827;
+        width: 100%;
+        text-align: center;
+        transition: 0.3s;
+        box-shadow: 0 10px 27px rgba(0,0,0,0.05);
+        padding: 2rem 0;
+        gap: 0;
+      }
+      
+      .nav-menu.active {
+        left: 0;
+      }
+      
+      .nav-link {
+        display: block;
+        padding: 1rem;
+        margin: 0.5rem 1rem;
+        border-radius: 5px;
+      }
+      
+      .footer-menu {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+      
+      header {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+      }
+      
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .card-body {
+        padding: 15px;
+      }
+      
+      .title {
+        font-size: 28px;
+      }
+      
+      .stat .value {
+        font-size: 18px;
+      }
+      
+      th, td {
+        padding: 8px;
+        font-size: 14px;
+      }
+      
+      .info-section {
+        padding: 1.5rem;
+      }
+    }
+
+    
+   </style>
+</head>
+<body>
+  <!-- Top Navigation Bar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      
+      <div class="logo">BudgetPlanner</div>
+      <ul class="nav-menu">
+        <li><a class="nav-link active" data-section="home">Home</a></li>
+        <li><a class="nav-link" data-section="about">About</a></li>
+        <li><a class="nav-link" data-section="contact">Contact</a></li>
+      </ul>
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container" id="home">
+    <header>
+      <div>
+        <div class="title">Personal Budget Planner</div>
+        <div class="sub">Track your income & expenses, see totals instantly</div>
+      </div>
+      
+    </header>
+
+    <div class="grid">
+      <!-- LEFT: Forms & Table -->
+      <section class="card">
+        <div class="card-body">
+          <h2 style="margin:0 0 12px 0">Add Records</h2>
+          <div class="row">
+            <div class="col" style="grid-column: span 3;">
+              <label for="type" class="hint">Choice:</label>
+              <select id="type">
+                <option value="income" >Income</option>
+                <option value="expense" selected>Expense</option> <!--selected by default-->
+              </select>
+            </div>
+            <div class="col" style="grid-column: span 3;">
+              <label for="category" class="hint">Category</label>
+              <select id="category">
+                <option value="Salary">Salary</option>
+                <option value="Freelance">Freelance</option>
+                <option value="Housing">Housing</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="gift">gift</option>
+                <option value="Utilities">Utilities</option>
+                <option value="Health">Health</option>
+                <option value="Education">Education</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Other">Other income</option>
+                <option value="Other_expense">Other_expense</option>
+              </select>
+            </div>
+            <div class="col" style="grid-column: span 3;">
+              <label for="amount" class="hint">Amount</label>
+              <input id="amount" type="number" min="0" step="0.01" placeholder="0.00ETB" />
+            </div>
+            <div class="col" style="grid-column: span 3;">
+              <label for="date" class="hint">Date</label>
+              <input id="date" type="date" />
+            </div>
+            <div class="col" style="grid-column: span 12;">
+              <label for="note" class="hint">Note or additional information (optional)</label>
+              <input id="note" type="text" placeholder="e.g., Grocery, Rent, Bonus......" />
+            </div>
+          </div>
+          <div class="row" style="margin-top: 10px; align-items: center;">
+            <div class="col" style="grid-column: span 6;">
+              <button class="btn primary" id="addBtn"> Add</button>
+            </div>
+            <div class="col" style="grid-column: span 6; text-align: right;">
+              <span class="hint">Tip: Use the month filter to see a specific month.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body" style="padding-top: 0;">
+          <div class="row" style="align-items: end;">
+            <div class="col" style="grid-column: span 6;">
+              <label for="filterMonth" class="hint">Filter by month</label>
+              <input id="filterMonth" type="month" />
+            </div>
+            <div class="col" style="grid-column: span 6; text-align:right;">
+              <button class="btn warn" id="clearFilterBtn">Clear Filter</button>
+        </div>
+          </div>
+
+          <div style="overflow-x:auto; margin-top: 14px;">
+            <table id="table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Type</th>
+                  <th>Category</th>
+                  <th>Note</th>
+                  <th>Date</th>
+                  <th>Amount</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                <tr class="empty"><td colspan="7">No records stil now. Add income or expenses above.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Summary -->
+      <aside class="card">
+        <div class="card-body">
+          <h2 style="margin:0 0 12px 0">Summary</h2>
+          <div class="row">
+            <div class="col" style="grid-column: span 12;">
+              <label for="monthlyIncome" class="hint">Track Monthly Income</label>
+              <input id="monthlyIncome" type="number" min="0" step="0.01" placeholder="0.00ETB" />
+            </div>
+          </div>
+
+          <div class="stat-grid" style="margin-top: 12px;">
+            <div class="stat">
+              <div class="label">Income (Sum)</div>
+              <div class="value" id="sumIncome">0.00ETB</div>
+            </div>
+            <div class="stat">
+              <div class="label">Expenses (Sum)</div>
+              <div class="value" id="sumExpense">0.00ETB</div>
+            </div>
+            <div class="stat">
+              <div class="label">Remaining</div>
+              <div class="value" id="remaining">0.00ETB</div>
+            </div>
+          </div>
+
+          <div style="margin:14px 0 6px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="hint">Budget usage in %</span>
+            <span class="hint" id="usageLabel">0%</span>
+          </div>
+          <div class="meter" id="meter"><span></span></div>
+
+          <div style="margin-top:12px;" class="hint">
+            • The meter compares <strong>expenses</strong> to your <strong>Track monthly income</strong>.<br>
+            • If you don't enter planned income, it compares expenses to actual income rows.
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- About Section -->
+    <section class="info-section" id="about">
+      <h2>About Personal Budget Planner</h2>
+      <p>Our Personal Budget Planner is a comprehensive financial management tool designed to help you take control of your finances. With an intuitive interface and powerful tracking capabilities, you can:</p>
+      <ul>
+        <li>Track income and expenses in real-time</li>
+        <li>Categorize transactions for better financial insight</li>
+        <li>Monitor your budget usage with visual indicators</li>
+        <li>Filter data by month to analyze spending patterns</li>
+        <li>Set financial goals and track your progress</li>
+      </ul>
+      <p>Whether you're saving for a big purchase, trying to reduce debt, or simply wanting to understand where your money goes each month, our budget planner provides the tools you need to make informed financial decisions.</p>
+      <p>This application works entirely in your browser - no data is sent to any server, ensuring your financial information remains completely private.</p>
+      <!--div class="click-counter">
+        This section has been viewed <span id="aboutClicks">0</span> times.
+      </div-->
+    </section>
+
+    <!-- Contact Section -->
+    <section class="info-section" id="contact">
+      <h2>Contact Us</h2>
+      <p>Have questions or feedback about our Budget Planner? We'd love to hear from you!</p>
+      <p>Reach out to our support team at: <strong>brolf@budgetplanner.example.com</strong></p>
+      <p>For feature suggestions: <strong>ideas@budgetplanner.example.com</strong></p>
+      <p>Follow us on social media for updates and personal finance tips:</p>
+      <ul>
+        <li>Twitter: @BudgetPlannerApp</li>
+        <li>Facebook: /BudgetPlannerApp</li>
+        <li>Instagram: @BudgetPlannerApp</li>
+      </ul>
+      <!--div class="click-counter">
+        This section has been viewed <span id="contactClicks">0</span> times.
+      </div-->
+    </section>
+  </div>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="footer-nav">
+    <div class="footer-nav-container">
+      <ul class="footer-menu">
+        <li><a class="footer-link" data-section="home">Home</a></li>
+        <li><a class="footer-link" data-section="about">About</a></li>
+        <li><a class="footer-link" data-section="contact">Contact</a></li>
+      </ul>
+      <div class="copyright">
+        &copy; 2025 Designed for Personal Budget Planner. By brolf Tech Summery Bootcamp Student.
+      </div>
+    </div>
+  </nav>
+
+  <script>
+    // ====== STATE (in-memory only; no JSON, no persistence) ======
+    const rows = []; // each: [type, category, note, dateISO, amountNumber]
+
+    // ====== DOM ======
+    const els = {
+      type: document.getElementById('type'),
+      category: document.getElementById('category'),
+      amount: document.getElementById('amount'),
+      date: document.getElementById('date'),
+      note: document.getElementById('note'),
+      addBtn: document.getElementById('addBtn'),
+      tbody: document.getElementById('tbody'),
+      table: document.getElementById('table'),
+      monthlyIncome: document.getElementById('monthlyIncome'),
+      sumIncome: document.getElementById('sumIncome'),
+      sumExpense: document.getElementById('sumExpense'),
+      remaining: document.getElementById('remaining'),
+      meter: document.getElementById('meter'),
+      usageLabel: document.getElementById('usageLabel'),
+      filterMonth: document.getElementById('filterMonth'),
+      clearFilterBtn: document.getElementById('clearFilterBtn'),
+      resetBtn: document.getElementById('resetBtn'),
+      
+    };
+
+    // Navigation functionality
+    const hamburger = document.querySelector('.hamburger');
+    const navMenu = document.querySelector('.nav-menu');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const footerLinks = document.querySelectorAll('.footer-link');
+    const aboutSection = document.getElementById('about');
+    const contactSection = document.getElementById('contact');
+    const aboutClicks = document.getElementById('aboutClicks');
+    const contactClicks = document.getElementById('contactClicks');
+    
+    let clickCounts = {
+      about: 0,
+      contact: 0
+    };
+    
+    // Function to show a specific section
+    function showSection(sectionId) {
+      // Hide all sections first
+      aboutSection.classList.remove('visible');
+      contactSection.classList.remove('visible');
+      
+      // Show the selected section if it's not home
+      if (sectionId !== 'home') {
+        const section = document.getElementById(sectionId);
+        if (section) {
+          section.classList.add('visible');
+          
+          // Update click count
+          if (sectionId === 'about') {
+            clickCounts.about++;
+            aboutClicks.textContent = clickCounts.about;
+          } else if (sectionId === 'contact') {
+            clickCounts.contact++;
+            contactClicks.textContent = clickCounts.contact;
+          }
+          
+          // Scroll to the section
+          section.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        // Scroll to top if home is selected
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      
+      // Update active link
+      navLinks.forEach(link => {
+        if (link.getAttribute('data-section') === sectionId) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    }
+    
+    // Add event listeners to navigation links
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        const section = link.getAttribute('data-section');
+        showSection(section);
+        navMenu.classList.remove('active');
+      });
+    });
+    
+    // Add event listeners to footer links
+    footerLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        const section = link.getAttribute('data-section');
+        showSection(section);
+      });
+    });
+    
+    // Hamburger menu functionality
+    hamburger.addEventListener('click', () => {
+      navMenu.classList.toggle('active');
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+        navMenu.classList.remove('active');
+      }
+    });
+
+    // Prefill date with today
+    (() => { const t = new Date(); els.date.value = t.toISOString().slice(0,10); els.filterMonth.value = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}`; })();
+
+    // ====== Helpers ======
+    function fmt(n){ return Number(n).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}); }
+    function monthKey(iso){ return iso ? iso.slice(0,7) : ''; }
+
+    function clearEmptyRow(){
+      const empty = els.tbody.querySelector('.empty');// queryselector : select the 1st element that machs a css selector
+      if (empty) empty.remove();
+    }
+
+    function addRowToDOM(index, rec){
+      const [type, category, note, dateISO, amount] = rec;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${index+1}</td>
+        <td><span class="pill ${type}">${type}</span></td>
+        <td>${category}</td>
+        <td>${note || ''}</td>
+        <td>${dateISO}</td>
+        <td class="amount">${fmt(amount)}</td>
+        <td><button class="btn danger" data-del="${index}">Delete</button></td>
+      `;
+      els.tbody.appendChild(tr);
+    }
+
+    function rebuildTable(){
+      els.tbody.innerHTML = '';
+      const mk = els.filterMonth.value;
+      let shown = 0;
+      rows.forEach((r, i) => {
+        if (!mk || monthKey(r[3]) === mk){
+          addRowToDOM(shown, r);
+          shown++;
+        }
+      });
+      if (shown === 0) {
+        const tr = document.createElement('tr');
+        tr.className = 'empty';
+        tr.innerHTML = '<td colspan="7">No records for this view.</td>';
+        els.tbody.appendChild(tr);
+      }
+      attachDeleteHandlers();
+      recompute();
+    }
+
+    function attachDeleteHandlers(){
+      els.tbody.querySelectorAll('[data-del]').forEach(btn => {
+        btn.onclick = () => {
+          const idxShown = Number(btn.getAttribute('data-del'));
+          // map shown index back to actual rows index
+          const mk = els.filterMonth.value;
+          let actualIndex = -1; let seen = -1;
+          for (let i = 0; i < rows.length; i++){
+            if (!mk || monthKey(rows[i][3]) === mk){
+              seen++;
+              if (seen === idxShown){ actualIndex = i; break; }
+            }
+          }
+          if (actualIndex > -1){ rows.splice(actualIndex,1); rebuildTable(); }
+        }
+      });
+    }
+
+    function recompute(){
+      const mk = els.filterMonth.value;
+      let inc = 0, exp = 0;
+      rows.forEach(([type,, , dateISO, amount]) => {
+        if (!mk || monthKey(dateISO) === mk){
+          if (type === 'income') inc += amount; else exp += amount;
+        }
+      });
+      els.sumIncome.textContent = fmt(inc);
+      els.sumExpense.textContent = fmt(exp);
+
+      // Remaining: prefer planned monthly income if given; else use actual income
+      const planned = Number(els.monthlyIncome.value) || 0;
+      const baseIncome = planned > 0 ? planned : inc;
+      const remain = baseIncome - exp;
+      els.remaining.textContent = fmt(remain);
+
+      // Meter
+      const used = baseIncome > 0 ? Math.min(1, exp / baseIncome) : 0;
+      els.meter.classList.toggle('over', baseIncome > 0 && exp > baseIncome);
+      els.meter.firstElementChild.style.width = (used*100).toFixed(0) + '%';
+      els.usageLabel.textContent = baseIncome > 0 ? ((exp / baseIncome) * 100).toFixed(0) + '%' : '0%';
+    }
+
+    function addRecord(){
+      const type = els.type.value;
+      const category = els.category.value;
+      const amount = Number(els.amount.value);
+      const dateISO = els.date.value;
+      const note = els.note.value.trim();
+
+      if (!dateISO){ alert('Please choose a date.'); return; }
+      if (!isFinite(amount) || amount <= 0){ alert('Enter a valid positive amount.'); return; }
+
+      clearEmptyRow();
+      rows.push([type, category, note, dateISO, amount]);
+      rebuildTable();
+      // reset amount & note for quick entry
+      els.amount.value = '';
+      els.note.value = '';
+      els.amount.focus();
+    }
+
+    function toCSV(){
+      const header = 'Type,Category,Note,Date,Amount\n';
+      const mk = els.filterMonth.value;
+      let body = '';
+      for (let i = 0; i < rows.length; i++){
+        const r = rows[i];
+        if (!mk || monthKey(r[3]) === mk){
+          const line = [r[0], r[1], (r[2]||'').replace(/,/g,';'), r[3], r[4].toFixed(2)].join(',');
+          body += line + '\n';
+        }
+      }
+      const blob = new Blob([header + body], {type: 'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'budget.csv'; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // ====== Events ======
+    els.addBtn.onclick = addRecord;
+    els.monthlyIncome.oninput = recompute;
+    els.filterMonth.oninput = rebuildTable;
+    els.clearFilterBtn.onclick = () => { els.filterMonth.value = ''; rebuildTable(); };
+    els.resetBtn.onclick = () => { if (confirm('Clear ALL records in the table?')) { rows.splice(0, rows.length); rebuildTable(); }};
+    els.printBtn.onclick = () => window.print();
+    els.exportBtn.onclick = toCSV;
+
+    // initial compute
+    recompute();
+  </script>
+</body>
+</html>
